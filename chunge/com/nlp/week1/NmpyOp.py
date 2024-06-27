@@ -4,6 +4,11 @@ import torch
 import numpy as np
 
 
+'''
+This codes is for numpy basic operation, it is also for torch basic operation.
+Two ways to deal with matrix, one is numpy, another is torch, the first one is bascially for numpy, 
+the second one is for torch, it is a special treatment.
+'''
 
 #numpy基本操作
 x = np.array([[1,2,3],
@@ -37,36 +42,27 @@ print(x.transpose())
 print(x.flatten())
 
 
-
-#torch
-y = torch.FloatTensor([[1,2,3],
-                       [4,5,0]])
-
-# dimensionality i.e. rank
-print("matrix dim   "+str(y.ndim))
-print("matrix shape "+str(y.shape))
-print(y.size)
-print(np.sum(y))
-print(np.sum(y, axis=0))
-print(np.sum(y, axis=1))
-
-
-print(np.reshape(y, (3,2)))
-print(np.sqrt(y))
-print(np.exp(x))
-print(x.transpose())
-print(x.flatten())
+#
+print(np.zeros((3,4,5)))
+# three 4*5-dimensional arrays with random values between 0 and 1
+print(np.random.rand(3,4,5))
+# three 4*5-dimensional arrays with random values between -1 and 1
+print(np.random.randn(3,4,5))
 
 #
-print("np.zeros"+str(np.zeros((3,4,5))))
-# print(np.random.rand(3,4,5))
-#
-# x = np.random.rand(3,4,5)
+x = np.random.rand(3,4,5)
 x = torch.FloatTensor(x)
+print("x.shape   "+str(x.shape))
 print(x.shape)
+
 print(torch.exp(x))
 print(torch.sum(x, dim=0))
 print(torch.sum(x, dim=1))
+print(torch.sum(x, dim=2))
+
+
+
 print(x.transpose(1, 0))
 print(x.flatten())
+
 
