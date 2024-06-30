@@ -2,13 +2,24 @@ import matplotlib.pyplot as pyplot
 import math
 import sys
 
-# X = [0.01 * x for x in range(100)]
-# Y = [2*x**2 + 3*x + 4 for x in X]
-# print(X)
-# print(Y)
-# pyplot.scatter(X, Y, color='red')
-# pyplot.show()
-# input()
+
+'''
+def func(x):
+    y = w1 * x**2 + w2 * x + w3
+    return y
+We can also express the functional expression in the Python in this way.
+'''
+
+'''
+# It is a nice way to show a picture of any function as you wish.
+X = [0.01 * x for x in range(100)]
+Y = [2*x**2 + 3*x + 4 for x in X]
+print(X)
+print(Y)
+pyplot.scatter(X, Y, color='red')
+pyplot.show()
+input()
+'''
 
 
 X = [0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.3, 0.31, 0.32, 0.33, 0.34, 0.35000000000000003, 0.36, 0.37, 0.38, 0.39, 0.4, 0.41000000000000003, 0.42, 0.43, 0.44, 0.45, 0.46, 0.47000000000000003, 0.48, 0.49, 0.5, 0.51, 0.52, 0.53, 0.54, 0.55, 0.56, 0.5700000000000001, 0.58, 0.59, 0.6, 0.61, 0.62, 0.63, 0.64, 0.65, 0.66, 0.67, 0.68, 0.6900000000000001, 0.7000000000000001, 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8, 0.81, 0.8200000000000001, 0.8300000000000001, 0.84, 0.85,
@@ -18,19 +29,30 @@ Y = [4.0, 4.0302, 4.0608, 4.0918, 4.1232, 4.155, 4.1872, 4.2198, 4.2528, 4.2862,
 # X = [0.01 * x for x in range(100)]
 # Y = [2*x**2 + 3*x + 4 for x in X]
 
+# the first stop, choose a model to describe the sample;
 def func(x):
     y = w1 * x**2 + w2 * x + w3
     return y
 
+# calculate the difference between predict and true value;
+# the square of the difference is the loss
+# line
 def loss(y_pred, y_true):
     return (y_pred - y_true) ** 2
 
 # 权重随机初始化
+# weigh initialize
 w1, w2, w3 = 1, 1, 11
+
+
+# stochastic gradient descent   SGD 随机梯度下降法
+# 每一个参数的设置方式 W1 = W1 - lr * grad_w1
 
 # 学习率设置
 lr = 0.1
 
+# if there is no batch_size, the batch_size is the same as the sample size,
+# but if there is batch_size, the grad_w1 is the average of the grad_w1 of the batch_size.
 
 # 训练过程
 for epoch in range(1000):
@@ -40,12 +62,12 @@ for epoch in range(1000):
         epoch_loss += loss(y_pred, y_true)
         #梯度计算
         grad_w1 = 2 * (y_pred - y_true) * x ** 2
-        grad_w2 = 2 * (y_pred - y_true) * x 
-        grad_w3 = 2 * (y_pred - y_true) 
+        grad_w2 = 2 * (y_pred - y_true) * x
+        grad_w3 = 2 * (y_pred - y_true)
         #权重更新
-        w1 = w1 - lr * grad_w1   #sgd 
-        w2 = w2 - lr * grad_w2 
-        w3 = w3 - lr * grad_w3 
+        w1 = w1 - lr * grad_w1   #sgd
+        w2 = w2 - lr * grad_w2
+        w3 = w3 - lr * grad_w3
 
     epoch_loss /= len(X)
     print("第%d轮， loss %f" %(epoch, epoch_loss))
@@ -55,7 +77,7 @@ for epoch in range(1000):
 print(f"训练后权重:w1:{w1} w2:{w2} w3:{w3}")
 
 #使用训练后模型输出预测值
-Yp = [func(i) for i in X] 
+Yp = [func(i) for i in X]
 
 #预测值与真实值比对数据分布
 pyplot.scatter(X, Y, color="red")
@@ -63,3 +85,18 @@ pyplot.scatter(X, Yp)
 pyplot.show()
 
 
+'''
+# 梯度下降法
+# 梯度下降法是一种优化方法，用于求解非线性函数的最小值。
+# 梯度下降法的基本思想是：
+# 1. 假设函数在某一点的梯度为零，则该点为函数的最小值；
+# 2. 如果函数在某一点的梯度不为零，则该点为函数的非极小值；
+# 3. 如果函数在某一点的梯度为正，则该点为函数的鞍点；
+# 4. 如果函数在某一点的梯度为负，则该点为函数的非极大值；
+# 5. 如果函数在某一点的梯度为零，则该点为函数的驻点；
+# 6. 如果函数在某 '''
+
+'''
+this is use the batch_size to train the model.
+'''
+#
