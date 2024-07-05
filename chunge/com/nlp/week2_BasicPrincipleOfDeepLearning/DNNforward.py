@@ -15,14 +15,20 @@ class TorchModel(nn.Module):
         super(TorchModel, self).__init__()
         self.layer1 = nn.Linear(input_size, hidden_size1) #w：3 * 5
         self.layer2 = nn.Linear(hidden_size1, hidden_size2) # 5 * 2
-
+    '''
+    定义一个神经网络的前向传播函数。该函数使用了两个全连接层（layer1和layer2），
+    其中layer1的输出为输入到layer2，最终输出为y_pred。
+    '''
     def forward(self, x):
         x = self.layer1(x)   #shape: (batch_size, input_size) -> (batch_size, hidden_size1) 
         y_pred = self.layer2(x) #shape: (batch_size, hidden_size1) -> (batch_size, hidden_size2) 
         return y_pred
 
-#自定义模型
+# custom model use numpy not TorchModel
+# 该模型包含两个全连接层和两个偏置项
 class DiyModel:
+    # __init__方法接受四个参数：w1、b1、w2和b2。
+    # 这些参数是模型的权重和偏置矩阵。
     def __init__(self, w1, b1, w2, b2):
         self.w1 = w1
         self.b1 = b1
@@ -41,7 +47,8 @@ x = np.array([[3.1, 1.3, 1.2],
               [2.1, 1.3, 13]])
 #建立torch模型
 torch_model = TorchModel(3, 5, 2)
-
+    # 这里的size可以这么理解： 输入 2 * 3，hidden_layer 3 * 5, hidden_layer2 5*2;
+'''`torch_model.state_dict()`返回一个包含模型所有参数的字典，键是参数名称，值是参数值。这对于保存和加载模型非常有用'''
 print(torch_model.state_dict())
 
 print("-----------")

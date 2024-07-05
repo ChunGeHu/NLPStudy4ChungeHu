@@ -11,7 +11,8 @@ ce_loss = nn.CrossEntropyLoss()
 #假设有3个样本，每个都在做3分类
 pred = torch.FloatTensor([[0.3, 0.1, 0.3],
                           [0.9, 0.2, 0.9],
-                          [0.5, 0.4, 0.2]]) #n*class_num
+                          [0.5, 0.4, 0.2]])
+#n*class_num
 #正确的类别分别为1,2,0
 target = torch.LongTensor([1,2,0])     #n
 
@@ -20,7 +21,7 @@ loss = ce_loss(pred, target)
 print(loss, "torch输出交叉熵")
 
 
-#实现softmax函数
+#实现softmax函数  输入的是数组，输出的也是数组
 def softmax(matrix):
     return np.exp(matrix) / np.sum(np.exp(matrix), axis=1, keepdims=True)
 

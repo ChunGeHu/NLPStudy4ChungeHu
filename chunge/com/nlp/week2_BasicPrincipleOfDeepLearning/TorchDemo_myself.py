@@ -11,7 +11,13 @@ import matplotlib.pyplot as plt
 
 基于pytorch框架编写模型训练
 实现一个自行构造的找规律(机器学习)任务
-规律：x是一个5维向量，哪个最大就是输出哪个
+
+规律：x是一个5维向量，哪个最大就是输出哪个的下标01234
+
+使用的优化器为 adam
+使用的loss函数不用sgd 而是使用 crossEntropy
+
+激活函数-Softmax  multi-class classification
 
 """
 
@@ -21,12 +27,11 @@ class TorchModel(nn.Module):
         super(TorchModel, self).__init__()
         self.linear = nn.Linear(input_size, 5)  # 线性层
         self.activation = torch.sigmoid  # sigmoid归一化函数
-        self.loss = nn.functional.mse_loss  # loss函数采用均方差损失
+        self.loss = nn.functional.cross_entropy  # loss函数采用交叉熵
 
     # 当输入真实标签，返回loss值；无真实标签，返回预测值
     def forward(self, x, y=None):
-        x = self.linear(x)  # (batch_size, input_size) -> (batch_size, 1)
-        y_pred = self.activation(x)  # (batch_size, 1) -> (batch_size, 1)
+        y_pred = self.linear(x)  # (batch_size, input_size) -> (batch_size, 5)
         if y is not None:
             return self.loss(y_pred, y)  # 预测值和真实值计算损失
         else:
@@ -34,13 +39,11 @@ class TorchModel(nn.Module):
 
 
 # 生成一个样本, 样本的生成方法，代表了我们要学习的规律
-# 随机生成一个5维向量，如果第一个值大于第五个值，认为是正样本，反之为负样本
+# 随机生成一个5维向量，如果第一个值最大就 就输出0 第二个最大就输出1 ... 依次类推；
+# 可以转化为第n个数据最大的概率，依次类推
 def build_sample():
     x = np.random.random(5)
-    if x[0] > x[4]:
-        return x, 1
-    else:
-        return x, 0
+    return x, np.argmax(x)
 
 
 # 随机生成一批样本
@@ -51,8 +54,8 @@ def build_dataset(total_sample_num):
     for i in range(total_sample_num):
         x, y = build_sample()
         X.append(x)
-        Y.append([y])
-    return torch.FloatTensor(X), torch.FloatTensor(Y)
+        Y.append(y)
+    return torch.FloatTensor(X), torch.LongTensor(Y)
 
 
 # 测试代码
@@ -61,15 +64,12 @@ def evaluate(model):
     model.eval()
     test_sample_num = 100
     x, y = build_dataset(test_sample_num)
-    print("本次预测集中共有%d个正样本，%d个负样本" % (sum(y), test_sample_num - sum(y)))
     correct, wrong = 0, 0
     with torch.no_grad():
         y_pred = model(x)  # 模型预测
         for y_p, y_t in zip(y_pred, y):  # 与真实标签进行对比
-            if float(y_p) < 0.5 and int(y_t) == 0:
-                correct += 1  # 负样本判断正确
-            elif float(y_p) >= 0.5 and int(y_t) == 1:
-                correct += 1  # 正样本判断正确
+            if torch.argmax(y_p) == int(y_t):
+                correct += 1
             else:
                 wrong += 1
     print("正确预测个数：%d, 正确率：%f" % (correct, correct / (correct + wrong)))
@@ -94,9 +94,9 @@ def main():
     for epoch in range(epoch_num):
         model.train()
         watch_loss = []
-        for batch_index in range(train_sample // batch_size):    
-            x = train_x[batch_index * batch_size : (batch_index + 1) * batch_size]
-            y = train_y[batch_index * batch_size : (batch_index + 1) * batch_size]
+        for batch_index in range(train_sample // batch_size):
+            x = train_x[batch_index * batch_size: (batch_index + 1) * batch_size]
+            y = train_y[batch_index * batch_size: (batch_index + 1) * batch_size]
             loss = model(x, y)  # 计算loss
             loss.backward()  # 计算梯度
             optim.step()  # 更新权重
@@ -106,7 +106,7 @@ def main():
         acc = evaluate(model)  # 测试本轮模型结果
         log.append([acc, float(np.mean(watch_loss))])
     # 保存模型
-    torch.save(model.state_dict(), "model.pt")
+    torch.save(model.state_dict(), "model2.pt")
     # 画图
     print(log)
     plt.plot(range(len(log)), [l[0] for l in log], label="acc")  # 画acc曲线
@@ -127,13 +127,13 @@ def predict(model_path, input_vec):
     with torch.no_grad():  # 不计算梯度
         result = model.forward(torch.FloatTensor(input_vec))  # 模型预测
     for vec, res in zip(input_vec, result):
-        print("输入：%s, 预测类别：%d, 概率值：%f" % (vec, round(float(res)), res))  # 打印结果
+        print("输入：%s, 第 %s 个参数最大, 概率值：%s" % (vec, torch.argmax(res).item(), res))   # 打印结果
 
 
 if __name__ == "__main__":
     # main()
-    test_vec = [[0.07889086,0.15229675,0.31082123,0.03504317,0.18920843],
-                [0.94963533,0.5524256,0.95758807,0.95520434,0.84890681],
-                [0.78797868,0.67482528,0.13625847,0.34675372,0.19871392],
-                [0.79349776,0.59416669,0.92579291,0.41567412,0.1358894]]
-    predict("model.pt", test_vec)
+    test_vec = [[0.07889086, 0.15229675, 0.31082123, 0.03504317, 0.18920843],
+            [0.94963533, 0.5524256, 0.95758807, 0.95520434, 0.84890681],
+            [0.78797868, 0.67482528, 0.13625847, 0.34675372, 0.19871392],
+            [0.79349776, 0.59416669, 0.92579291, 0.41567412, 0.1358894]]
+    predict("model2.pt", test_vec)

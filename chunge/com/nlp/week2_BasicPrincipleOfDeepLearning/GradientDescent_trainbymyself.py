@@ -26,15 +26,13 @@ def func(x):
 
 
 # init the 3 weights
-w1 = 1.0
-w2 = 0.0
-w3 = 0.0
+w1, w2, w3 = 1, 1, 11
 
 # init the learning rate
-alpha = 0.001
+alpha = 0.1
 
 # select one batch_size
-batch_size = 20
+batch_size = 5
 
 # select the loss function
 '''
@@ -48,28 +46,28 @@ def loss(y_pred, y_true):
 
 
 # the most important part, construct the way of gradients descent
-
+grad_w1 = 0
+grad_w2 = 0
+grad_w3 = 0
 for epoches in range(1000):
-    grad_w1 = 0
-    grad_w2 = 0
-    grad_w3 = 0
+
     counter = 0
-    loss_value =0
+    loss_value = 0
     for (x, y_true) in zip(X, Y):
         y_pred = func(x)
         loss_value += loss(y_pred, y_true)
         counter += 1
 
         # calculate the gradients
-        grad_w1 += 2 * x ** 2 * (y_pred- y_true)
-        grad_w2 += 2 * x *(y_pred-y_true)
-        grad_w3 += 2 * (y_pred- y_true)
+        grad_w1 += 2 * (y_pred - y_true) * x ** 2
+        grad_w2 += 2 * (y_pred - y_true) * x
+        grad_w3 += 2 * (y_pred - y_true)
 
         if counter % batch_size == 0:
-        # update the weights
-            w1 = w1 - alpha * grad_w1/batch_size
-            w2 = w2 - alpha * grad_w2/batch_size
-            w3 = w3 - alpha * grad_w3/batch_size
+            # update the weights
+            w1 = w1 - alpha * grad_w1 / batch_size
+            w2 = w2 - alpha * grad_w2 / batch_size
+            w3 = w3 - alpha * grad_w3 / batch_size
             grad_w1 = 0
             grad_w2 = 0
             grad_w3 = 0
@@ -77,15 +75,15 @@ for epoches in range(1000):
             print(loss_value)
 
     loss_value /= len(X)
-    print("第%d轮， loss %f" %(epoches, loss_value))
+    print("第%d轮， loss %f" % (epoches, loss_value))
     if loss_value < 0.0001:
         break
 print(f"训练后权重:w1:{w1} w2:{w2} w3:{w3}")
 
-#使用训练后模型输出预测值
+# 使用训练后模型输出预测值
 Yp = [func(i) for i in X]
 
-#预测值与真实值比对数据分布
+# 预测值与真实值比对数据分布
 pyplot.scatter(X, Y, color="red")
 pyplot.scatter(X, Yp)
 pyplot.show()

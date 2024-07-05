@@ -4,8 +4,10 @@ import numpy
 
 '''
 softmax的计算
+y = exp(ak)/sum(exp(a1))
+and 
 '''
-
+# multi-class classification
 def softmax(x):
     res = []
     for i in x:

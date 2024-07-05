@@ -71,7 +71,7 @@ class DiyModel:
         #由于pytorch存储做了转置，输出时也做转置处理
         return grad.T
 
-#梯度更新
+#梯度更新 sgd的 优化器的确定比较明显，由此引出 Adam;
 def diy_sgd(grad, weight, learning_rate):
     return weight - learning_rate * grad
 
@@ -141,3 +141,8 @@ print(update_torch_model_w, "torch更新后权重")
 # diy_update_w = diy_sgd(grad, numpy_model_w, learning_rate)
 diy_update_w = diy_adam(grad, numpy_model_w)
 print(diy_update_w, "diy更新权重")
+
+
+
+# adam 算是一个非常常见的优化器，起扩展也是adam的拓展比如AdamW 等等；
+# 工作中优化器是黑盒
